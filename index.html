@@ -52,7 +52,7 @@
 
     /* ── PAGE WRAPPER ───────────────────────────── */
     .page {
-      max-width: 960px;
+      max-width: 640px;
       margin: 0 auto;
       padding: 24px 24px 32px;
     }
@@ -93,11 +93,10 @@
 
     /* ── GRID ───────────────────────────────────── */
     .grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-      align-items: start;
+      display: block;
     }
+    /* Hide inactive card at ALL viewport sizes */
+    .grid .card.hidden { display: none; }
 
     /* ── CARD ───────────────────────────────────── */
     .card {
@@ -370,9 +369,9 @@
     .tt-prog { display: none; margin-top: 8px; }
     .tt-prog.show { display: block; }
 
-    /* ── MOBILE TAB ─────────────────────────────── */
+    /* ── TAB BAR (all screen sizes) ────────────── */
     .tab-bar {
-      display: none;
+      display: block;
       margin-bottom: 14px;
       border-bottom: 1px solid var(--border);
     }
@@ -381,7 +380,7 @@
       gap: 0;
     }
     .tab {
-      padding: 12px 20px;
+      padding: 10px 24px;
       font-size: 0.82rem;
       font-weight: 600;
       border: none;
@@ -392,6 +391,7 @@
       margin-bottom: -1px;
       transition: color var(--transition), border-color var(--transition);
       font-family: 'Inter', sans-serif;
+      letter-spacing: 0.01em;
     }
     .tab.active {
       color: var(--text-primary);
@@ -428,17 +428,32 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* ── RESPONSIVE ─────────────────────────────── */
-    @media (max-width: 720px) {
-      .grid { grid-template-columns: 1fr; }
-      .tab-bar { display: block; }
-      .grid .card.hidden { display: none; }
+    /* ── RESPONSIVE: mobile ─────────────────────── */
+    @media (max-width: 480px) {
       .row-2 { grid-template-columns: 1fr; }
       .page { padding: 16px 14px 24px; }
-    }
-    @media (max-width: 480px) {
       .card { padding: 16px 14px; }
       .breakdown { grid-template-columns: 1fr 1fr; }
+    }
+
+    /* ── RESPONSIVE: desktop upscale (fonts & horizontal only) ── */
+    @media (min-width: 481px) {
+      /* Wider page, same vertical padding */
+      .page { max-width: 720px; padding: 24px 40px 32px; }
+
+      /* Slightly bigger fonts only — no height/margin changes */
+      .header h1 { font-size: clamp(1.4rem, 3vw, 1.9rem); }
+      .header p  { font-size: 0.88rem; }
+      .tab       { padding: 10px 36px; font-size: 0.86rem; }
+      .label     { font-size: 0.74rem; }
+      .input     { font-size: 0.95rem; padding: 0 12px 0 32px; }
+      .input-icon { font-size: 0.86rem; }
+      .btn       { font-size: 0.86rem; }
+      .card h2   { font-size: 1.05rem; }
+      .card-sub  { font-size: 0.8rem; }
+      .result-main { font-size: clamp(1.3rem, 2.5vw, 1.7rem); }
+      .result-note { font-size: 0.85rem; }
+      .bd-value  { font-size: 0.92rem; }
     }
   </style>
 </head>
@@ -455,7 +470,7 @@
 
   <div class="divider"></div>
 
-  <!-- MOBILE TABS -->
+  <!-- TABS -->
   <nav class="tab-bar" role="tablist" aria-label="Calculator sections">
     <div class="tab-bar-inner">
       <button class="tab active" id="tab-tt" role="tab" aria-selected="true"  aria-controls="card-tt" onclick="switchTab('tt')">Time to Target</button>
