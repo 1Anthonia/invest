@@ -1031,6 +1031,11 @@
     document.getElementById('form-fv').addEventListener('keydown', e => {
       if (e.key === 'Enter') document.getElementById('btn-fv').click();
     });
+
+    // Set initial tab state so card-fv starts hidden on mobile
+    // (hidden class only takes effect inside the ≤720px media query,
+    //  so desktop layout is unaffected)
+    switchTab('tt');
   });
 </script>
 </body>
