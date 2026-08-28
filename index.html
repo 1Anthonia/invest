@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Investment Calculator</title>
   <meta name="description" content="Calculate how long monthly contributions take to reach a target, or project the future value of recurring monthly investments with compound interest." />
+  <link rel="icon" type="image/jpeg" href="favicon.jpg" />
+  <link rel="apple-touch-icon" href="favicon.jpg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -52,41 +54,41 @@
     .page {
       max-width: 960px;
       margin: 0 auto;
-      padding: 56px 24px 80px;
+      padding: 24px 24px 32px;
     }
 
     /* ── HEADER ─────────────────────────────────── */
     .header {
-      margin-bottom: 48px;
+      margin-bottom: 16px;
     }
     .header-eyebrow {
-      font-size: 0.72rem;
+      font-size: 0.68rem;
       font-weight: 600;
       letter-spacing: 0.1em;
       text-transform: uppercase;
       color: var(--text-muted);
-      margin-bottom: 10px;
+      margin-bottom: 4px;
     }
     .header h1 {
-      font-size: clamp(1.75rem, 4vw, 2.5rem);
+      font-size: clamp(1.3rem, 3vw, 1.8rem);
       font-weight: 700;
       letter-spacing: -0.03em;
       color: var(--text-primary);
       line-height: 1.15;
-      margin-bottom: 10px;
+      margin-bottom: 4px;
     }
     .header p {
-      font-size: 0.95rem;
+      font-size: 0.82rem;
       color: var(--text-secondary);
-      line-height: 1.6;
-      max-width: 420px;
+      line-height: 1.5;
+      max-width: 480px;
     }
 
     /* ── DIVIDER ────────────────────────────────── */
     .divider {
       height: 1px;
       background: var(--border);
-      margin-bottom: 48px;
+      margin-bottom: 16px;
     }
 
     /* ── GRID ───────────────────────────────────── */
@@ -102,7 +104,7 @@
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 32px 28px;
+      padding: 20px 20px;
       box-shadow: var(--shadow);
       transition: box-shadow var(--transition);
     }
@@ -115,44 +117,44 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      font-size: 0.68rem;
+      font-size: 0.65rem;
       font-weight: 700;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      padding: 4px 10px;
+      padding: 3px 8px;
       border-radius: 4px;
-      margin-bottom: 18px;
+      margin-bottom: 8px;
     }
     .tag-tt { background: #f0f0f0; color: var(--accent-1); }
     .tag-fv { background: #dcfce7; color: var(--accent-2); }
 
     .card h2 {
-      font-size: 1.05rem;
+      font-size: 0.95rem;
       font-weight: 700;
       letter-spacing: -0.01em;
       color: var(--text-primary);
-      margin-bottom: 4px;
+      margin-bottom: 2px;
     }
     .card-sub {
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       color: var(--text-secondary);
-      margin-bottom: 28px;
-      line-height: 1.5;
+      margin-bottom: 14px;
+      line-height: 1.4;
     }
 
     /* ── LABEL ──────────────────────────────────── */
     .label {
       display: block;
-      font-size: 0.73rem;
+      font-size: 0.68rem;
       font-weight: 600;
       letter-spacing: 0.04em;
       text-transform: uppercase;
       color: var(--text-secondary);
-      margin-bottom: 7px;
+      margin-bottom: 4px;
     }
 
     /* ── INPUT ──────────────────────────────────── */
-    .field { margin-bottom: 16px; }
+    .field { margin-bottom: 10px; }
 
     .input-wrap {
       position: relative;
@@ -161,8 +163,8 @@
     }
     .input-icon {
       position: absolute;
-      left: 13px;
-      font-size: 0.82rem;
+      left: 10px;
+      font-size: 0.8rem;
       font-weight: 600;
       color: var(--text-muted);
       pointer-events: none;
@@ -171,13 +173,13 @@
     }
     .input {
       width: 100%;
-      height: 44px;
+      height: 38px;
       background: var(--white);
       border: 1px solid var(--border);
       border-radius: var(--radius-sm);
-      padding: 0 12px 0 32px;
+      padding: 0 10px 0 28px;
       font-family: 'Inter', sans-serif;
-      font-size: 0.95rem;
+      font-size: 0.88rem;
       font-weight: 500;
       color: var(--text-primary);
       outline: none;
@@ -198,6 +200,25 @@
     /* Wider icon for "yr" */
     .icon-yr { font-size: 0.7rem; letter-spacing: 0.02em; }
     .pad-yr  { padding-left: 38px; }
+
+    /* Optional field badge */
+    .label-row {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      margin-bottom: 7px;
+    }
+    .label-row .label { margin-bottom: 0; }
+    .badge-opt {
+      font-size: 0.6rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      background: #f0f0f0;
+      border-radius: 3px;
+      padding: 1px 5px;
+    }
 
     /* Error */
     .input.is-error { border-color: var(--error); box-shadow: 0 0 0 3px rgba(220,38,38,0.07); }
@@ -220,8 +241,8 @@
     /* ── BUTTON ─────────────────────────────────── */
     .btn {
       width: 100%;
-      height: 46px;
-      margin-top: 22px;
+      height: 40px;
+      margin-top: 12px;
       border: none;
       border-radius: var(--radius-sm);
       font-family: 'Inter', sans-serif;
@@ -257,9 +278,9 @@
 
     /* ── RESULT PANEL ───────────────────────────── */
     .result {
-      margin-top: 22px;
+      margin-top: 12px;
       border-top: 1px solid var(--border);
-      padding-top: 20px;
+      padding-top: 12px;
       opacity: 0;
       transform: translateY(8px);
       transition: opacity 0.3s ease, transform 0.3s ease;
@@ -280,11 +301,11 @@
       margin-bottom: 6px;
     }
     .result-main {
-      font-size: clamp(1.5rem, 3vw, 1.9rem);
+      font-size: clamp(1.2rem, 2.5vw, 1.5rem);
       font-weight: 700;
       letter-spacing: -0.03em;
       line-height: 1.2;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
     .card-tt .result-main { color: var(--result-1); }
     .card-fv .result-main { color: var(--result-2); }
@@ -300,9 +321,9 @@
     .breakdown {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      margin-top: 16px;
-      padding-top: 16px;
+      gap: 8px;
+      margin-top: 10px;
+      padding-top: 10px;
       border-top: 1px solid var(--border);
     }
     .bd-label {
@@ -325,7 +346,7 @@
       background: var(--border);
       border-radius: 100px;
       overflow: hidden;
-      margin-top: 18px;
+      margin-top: 10px;
     }
     .prog-fill {
       height: 100%;
@@ -346,13 +367,13 @@
     }
 
     /* TT progress wrapper */
-    .tt-prog { display: none; margin-top: 14px; }
+    .tt-prog { display: none; margin-top: 8px; }
     .tt-prog.show { display: block; }
 
     /* ── MOBILE TAB ─────────────────────────────── */
     .tab-bar {
       display: none;
-      margin-bottom: 28px;
+      margin-bottom: 14px;
       border-bottom: 1px solid var(--border);
     }
     .tab-bar-inner {
@@ -379,12 +400,12 @@
 
     /* ── FOOTER ─────────────────────────────────── */
     .footer {
-      margin-top: 56px;
-      padding-top: 24px;
+      margin-top: 20px;
+      padding-top: 14px;
       border-top: 1px solid var(--border);
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       color: var(--text-muted);
-      line-height: 1.6;
+      line-height: 1.5;
     }
     .footer code {
       font-family: 'Menlo', 'Consolas', monospace;
@@ -413,10 +434,10 @@
       .tab-bar { display: block; }
       .grid .card.hidden { display: none; }
       .row-2 { grid-template-columns: 1fr; }
-      .page { padding: 36px 16px 60px; }
+      .page { padding: 16px 14px 24px; }
     }
     @media (max-width: 480px) {
-      .card { padding: 24px 20px; }
+      .card { padding: 16px 14px; }
       .breakdown { grid-template-columns: 1fr 1fr; }
     }
   </style>
@@ -455,16 +476,19 @@
       <form id="form-tt" novalidate onsubmit="return false;">
 
         <div class="row-2">
-          <!-- Monthly Amount -->
+          <!-- Initial Amount (optional) -->
           <div class="field">
-            <label class="label" for="tt-monthly">Monthly Amount</label>
+            <div class="label-row">
+              <label class="label" for="tt-initial">Initial Amount</label>
+              <span class="badge-opt">Optional</span>
+            </div>
             <div class="input-wrap">
               <span class="input-icon" aria-hidden="true">₦</span>
-              <input type="number" id="tt-monthly" class="input" placeholder="50,000"
-                     min="0.01" step="any" inputmode="decimal"
-                     aria-label="Monthly contribution in Naira" autocomplete="off" />
+              <input type="number" id="tt-initial" class="input" placeholder="0"
+                     min="0" step="any" inputmode="decimal"
+                     aria-label="Initial lump-sum amount in Naira (optional)" autocomplete="off" />
             </div>
-            <span class="err-msg" id="tt-monthly-err" role="alert" aria-live="polite"></span>
+            <span class="err-msg" id="tt-initial-err" role="alert" aria-live="polite"></span>
           </div>
 
           <!-- Target -->
@@ -480,6 +504,21 @@
           </div>
         </div>
 
+        <!-- Monthly Amount (optional) -->
+        <div class="field">
+          <div class="label-row">
+            <label class="label" for="tt-monthly">Monthly Contribution</label>
+            <span class="badge-opt">Optional</span>
+          </div>
+          <div class="input-wrap">
+            <span class="input-icon" aria-hidden="true">₦</span>
+            <input type="number" id="tt-monthly" class="input" placeholder="50,000"
+                   min="0" step="any" inputmode="decimal"
+                   aria-label="Monthly contribution in Naira (optional)" autocomplete="off" />
+          </div>
+          <span class="err-msg" id="tt-monthly-err" role="alert" aria-live="polite"></span>
+        </div>
+
         <!-- Rate -->
         <div class="field">
           <label class="label" for="tt-rate">Annual Interest Rate</label>
@@ -490,6 +529,21 @@
                    aria-label="Annual interest rate as a percentage" autocomplete="off" />
           </div>
           <span class="err-msg" id="tt-rate-err" role="alert" aria-live="polite"></span>
+        </div>
+
+        <!-- Annual Contribution Increase (optional) -->
+        <div class="field">
+          <div class="label-row">
+            <label class="label" for="tt-increase">Annual Contribution Increase</label>
+            <span class="badge-opt">Optional</span>
+          </div>
+          <div class="input-wrap">
+            <span class="input-icon" aria-hidden="true">%</span>
+            <input type="number" id="tt-increase" class="input" placeholder="e.g. 5"
+                   min="0" max="100" step="any" inputmode="decimal"
+                   aria-label="Annual percentage increase applied to monthly contribution (optional)" autocomplete="off" />
+          </div>
+          <span class="err-msg" id="tt-increase-err" role="alert" aria-live="polite"></span>
         </div>
 
         <button type="button" class="btn btn-tt" id="btn-tt"
@@ -524,16 +578,19 @@
       <form id="form-fv" novalidate onsubmit="return false;">
 
         <div class="row-2">
-          <!-- Monthly Amount -->
+          <!-- Initial Amount (optional) -->
           <div class="field">
-            <label class="label" for="fv-monthly">Monthly Amount</label>
+            <div class="label-row">
+              <label class="label" for="fv-initial">Initial Amount</label>
+              <span class="badge-opt">Optional</span>
+            </div>
             <div class="input-wrap">
               <span class="input-icon" aria-hidden="true">₦</span>
-              <input type="number" id="fv-monthly" class="input" placeholder="50,000"
-                     min="0.01" step="any" inputmode="decimal"
-                     aria-label="Monthly contribution in Naira" autocomplete="off" />
+              <input type="number" id="fv-initial" class="input" placeholder="0"
+                     min="0" step="any" inputmode="decimal"
+                     aria-label="Initial lump-sum amount in Naira (optional)" autocomplete="off" />
             </div>
-            <span class="err-msg" id="fv-monthly-err" role="alert" aria-live="polite"></span>
+            <span class="err-msg" id="fv-initial-err" role="alert" aria-live="polite"></span>
           </div>
 
           <!-- Years -->
@@ -549,6 +606,21 @@
           </div>
         </div>
 
+        <!-- Monthly Amount (optional) -->
+        <div class="field">
+          <div class="label-row">
+            <label class="label" for="fv-monthly">Monthly Contribution</label>
+            <span class="badge-opt">Optional</span>
+          </div>
+          <div class="input-wrap">
+            <span class="input-icon" aria-hidden="true">₦</span>
+            <input type="number" id="fv-monthly" class="input" placeholder="50,000"
+                   min="0" step="any" inputmode="decimal"
+                   aria-label="Monthly contribution in Naira (optional)" autocomplete="off" />
+          </div>
+          <span class="err-msg" id="fv-monthly-err" role="alert" aria-live="polite"></span>
+        </div>
+
         <!-- Rate -->
         <div class="field">
           <label class="label" for="fv-rate">Annual Interest Rate</label>
@@ -559,6 +631,21 @@
                    aria-label="Annual interest rate as a percentage" autocomplete="off" />
           </div>
           <span class="err-msg" id="fv-rate-err" role="alert" aria-live="polite"></span>
+        </div>
+
+        <!-- Annual Contribution Increase (optional) -->
+        <div class="field">
+          <div class="label-row">
+            <label class="label" for="fv-increase">Annual Contribution Increase</label>
+            <span class="badge-opt">Optional</span>
+          </div>
+          <div class="input-wrap">
+            <span class="input-icon" aria-hidden="true">%</span>
+            <input type="number" id="fv-increase" class="input" placeholder="e.g. 5"
+                   min="0" max="100" step="any" inputmode="decimal"
+                   aria-label="Annual percentage increase applied to monthly contribution (optional)" autocomplete="off" />
+          </div>
+          <span class="err-msg" id="fv-increase-err" role="alert" aria-live="polite"></span>
         </div>
 
         <button type="button" class="btn btn-fv" id="btn-fv"
@@ -695,120 +782,215 @@
     }));
   }
 
-  /* ── CALC 1: TIME TO TARGET (annuity) ───────────────
+  /* ── CALC 1: TIME TO TARGET ──────────────────────────
    *
-   * For a series of monthly payments PMT at monthly rate r_m,
-   * the future value annuity formula is:
-   *   FV = PMT × [((1 + r_m)^n − 1) / r_m]
-   *
-   * Solving for n (number of months):
-   *   n = ln(1 + FV × r_m / PMT) / ln(1 + r_m)
-   *
-   * where r_m = annual_rate / 12
+   * Simulates month-by-month. Supports optional initial lump-sum,
+   * optional monthly contribution, and optional annual escalation.
+   * At least one of initial or monthly must be provided.
    * ──────────────────────────────────────────────── */
   function calcTT(e) {
     ripple(e);
 
-    const monthlyEl = document.getElementById('tt-monthly');
-    const targetEl  = document.getElementById('tt-target');
-    const rateEl    = document.getElementById('tt-rate');
+    const initialEl  = document.getElementById('tt-initial');
+    const monthlyEl  = document.getElementById('tt-monthly');
+    const targetEl   = document.getElementById('tt-target');
+    const rateEl     = document.getElementById('tt-rate');
+    const increaseEl = document.getElementById('tt-increase');
 
+    // Validate required fields
     const ok =
-      validate(monthlyEl, document.getElementById('tt-monthly-err'), { min: 0, minMsg: 'Monthly amount must be greater than zero.' }) &
-      validate(targetEl,  document.getElementById('tt-target-err'),  { min: 0, minMsg: 'Target must be greater than zero.' }) &
-      validate(rateEl,    document.getElementById('tt-rate-err'),    { min: 0, minMsg: 'Rate must be greater than zero.', max: 100, maxMsg: 'Rate cannot exceed 100%.' });
+      validate(targetEl, document.getElementById('tt-target-err'), { min: 0, minMsg: 'Target must be greater than zero.' }) &
+      validate(rateEl,   document.getElementById('tt-rate-err'),   { min: 0, minMsg: 'Rate must be greater than zero.', max: 100, maxMsg: 'Rate cannot exceed 100%.' });
+
+    // Parse optional fields
+    const initialRaw  = initialEl.value.trim();
+    const monthlyRaw  = monthlyEl.value.trim();
+    const increaseRaw = increaseEl.value.trim();
+
+    const initial0 = initialRaw !== '' ? parseFloat(initialRaw) : 0;
+    const pmt0     = monthlyRaw !== '' ? parseFloat(monthlyRaw) : 0;
+
+    if (initialRaw !== '' && (isNaN(initial0) || initial0 < 0)) {
+      err(initialEl, document.getElementById('tt-initial-err'), 'Enter a valid amount (0 or above).');
+      return;
+    }
+    if (monthlyRaw !== '' && (isNaN(pmt0) || pmt0 < 0)) {
+      err(monthlyEl, document.getElementById('tt-monthly-err'), 'Enter a valid amount (0 or above).');
+      return;
+    }
+    if (initial0 === 0 && pmt0 === 0) {
+      err(monthlyEl, document.getElementById('tt-monthly-err'), 'Enter at least an initial amount or a monthly contribution.');
+      return;
+    }
+
+    if (increaseRaw !== '') {
+      const iv = parseFloat(increaseRaw);
+      if (isNaN(iv) || iv < 0) {
+        err(increaseEl, document.getElementById('tt-increase-err'), 'Enter a valid percentage (0 or above).');
+        return;
+      }
+      if (iv > 100) {
+        err(increaseEl, document.getElementById('tt-increase-err'), 'Annual increase cannot exceed 100%.');
+        return;
+      }
+    }
 
     if (!ok) return;
 
-    const pmt    = parseFloat(monthlyEl.value);  // monthly contribution
-    const target = parseFloat(targetEl.value);   // desired future value
-    const r_m    = (parseFloat(rateEl.value) / 100) / 12; // monthly rate
+    const target         = parseFloat(targetEl.value);
+    const r_m            = (parseFloat(rateEl.value) / 100) / 12;
+    const annualIncrease = increaseRaw !== '' ? parseFloat(increaseRaw) / 100 : 0;
 
-    // Guard: if rate is effectively 0, use simple division
-    let months;
-    if (r_m < 1e-10) {
-      months = target / pmt;
-    } else {
-      const inner = 1 + (target * r_m) / pmt;
-      if (inner <= 0) {
-        err(monthlyEl, document.getElementById('tt-monthly-err'),
-          'Monthly contribution is too small to ever reach this target at the given rate.');
-        return;
-      }
-      months = Math.log(inner) / Math.log(1 + r_m);
+    // Guard: initial already meets target
+    if (initial0 >= target) {
+      document.getElementById('tt-main').textContent = 'Already reached!';
+      document.getElementById('tt-note').innerHTML =
+        `Initial amount of <strong>${fmt(initial0)}</strong> already meets the target of <strong>${fmt(target)}</strong>.`;
+      document.getElementById('tt-prog').classList.add('show');
+      setBar('tt-fill', 100);
+      document.getElementById('result-tt').classList.add('show');
+      return;
     }
 
-    const totalContributed = pmt * months;
-    const interestEarned   = target - totalContributed;
+    // ── Simulate month by month ──
+    let balance = initial0;
+    let pmt     = pmt0;
+    let month   = 0;
+    let totalContributed = initial0;
+    const MAX_MONTHS = 12000;
+
+    while (balance < target && month < MAX_MONTHS) {
+      if (month > 0 && month % 12 === 0 && annualIncrease > 0) {
+        pmt = pmt * (1 + annualIncrease);
+      }
+      balance = balance * (1 + r_m) + pmt;
+      totalContributed += pmt;
+      month++;
+      // Safety: if pmt is 0 and balance won't grow enough, break
+      if (pmt < 1e-10 && r_m < 1e-10) break;
+    }
+
+    if (balance < target) {
+      err(rateEl, document.getElementById('tt-rate-err'),
+        'These inputs cannot reach the target. Increase the contribution, initial amount, or rate.');
+      return;
+    }
+
+    const months        = month;
+    const interestEarned = balance - totalContributed;
+    const increaseLabel  = annualIncrease > 0
+      ? ` escalating at <strong>${fmtPct(annualIncrease * 100)}</strong>/yr`
+      : '';
+    const initialLabel   = initial0 > 0
+      ? `<strong>${fmt(initial0)}</strong> initial + ` : '';
+    const pmtLabel       = pmt0 > 0
+      ? `<strong>${fmt(pmt0)}</strong>/month${increaseLabel}` : 'no monthly contribution';
 
     document.getElementById('tt-main').textContent = readableMonths(months);
     document.getElementById('tt-note').innerHTML =
-      `Contributing <strong>${fmt(pmt)}</strong>/month to reach <strong>${fmt(target)}</strong> ` +
+      `${initialLabel}${pmtLabel} to reach <strong>${fmt(target)}</strong> ` +
       `at <strong>${fmtPct(parseFloat(rateEl.value))}</strong> p.a. — ` +
-      `<span style="color:var(--text-muted)">${months.toFixed(1)} months total</span>`;
+      `<span style="color:var(--text-muted)">${months} months total</span>`;
 
-    const prog = document.getElementById('tt-prog');
-    prog.classList.add('show');
-    // Bar shows how much of the target is interest vs contributions
-    setBar('tt-fill', Math.min((interestEarned / target) * 100, 100));
-
+    document.getElementById('tt-prog').classList.add('show');
+    setBar('tt-fill', Math.min(((balance - initial0) / (target - initial0)) * 100, 100));
     document.getElementById('result-tt').classList.add('show');
   }
 
-  /* ── CALC 2: FUTURE VALUE (annuity) ─────────────────
+  /* ── CALC 2: FUTURE VALUE ────────────────────────────
    *
-   * FV = PMT × [((1 + r_m)^(n×12) − 1) / r_m]
-   *
-   * where r_m = annual_rate / 12,  n = years
+   * Supports optional initial lump-sum, optional monthly
+   * contribution, and optional annual escalation.
+   * Simulates month-by-month when escalation is set.
    * ──────────────────────────────────────────────── */
   function calcFV(e) {
     ripple(e);
 
-    const monthlyEl = document.getElementById('fv-monthly');
-    const rateEl    = document.getElementById('fv-rate');
-    const yearsEl   = document.getElementById('fv-years');
+    const initialEl  = document.getElementById('fv-initial');
+    const monthlyEl  = document.getElementById('fv-monthly');
+    const rateEl     = document.getElementById('fv-rate');
+    const yearsEl    = document.getElementById('fv-years');
+    const increaseEl = document.getElementById('fv-increase');
 
     const ok =
-      validate(monthlyEl, document.getElementById('fv-monthly-err'), { min: 0, minMsg: 'Monthly amount must be greater than zero.' }) &
-      validate(rateEl,    document.getElementById('fv-rate-err'),    { min: 0, minMsg: 'Rate must be greater than zero.', max: 100, maxMsg: 'Rate cannot exceed 100%.' }) &
-      validate(yearsEl,   document.getElementById('fv-years-err'),   { min: 0, minMsg: 'Years must be greater than zero.', max: 200, maxMsg: 'Maximum horizon is 200 years.' });
+      validate(rateEl,  document.getElementById('fv-rate-err'),  { min: 0, minMsg: 'Rate must be greater than zero.', max: 100, maxMsg: 'Rate cannot exceed 100%.' }) &
+      validate(yearsEl, document.getElementById('fv-years-err'), { min: 0, minMsg: 'Years must be greater than zero.', max: 200, maxMsg: 'Maximum horizon is 200 years.' });
+
+    const initialRaw  = initialEl.value.trim();
+    const monthlyRaw  = monthlyEl.value.trim();
+    const increaseRaw = increaseEl.value.trim();
+
+    const initial0 = initialRaw !== '' ? parseFloat(initialRaw) : 0;
+    const pmt0     = monthlyRaw !== '' ? parseFloat(monthlyRaw) : 0;
+
+    if (initialRaw !== '' && (isNaN(initial0) || initial0 < 0)) {
+      err(initialEl, document.getElementById('fv-initial-err'), 'Enter a valid amount (0 or above).');
+      return;
+    }
+    if (monthlyRaw !== '' && (isNaN(pmt0) || pmt0 < 0)) {
+      err(monthlyEl, document.getElementById('fv-monthly-err'), 'Enter a valid amount (0 or above).');
+      return;
+    }
+    if (initial0 === 0 && pmt0 === 0) {
+      err(monthlyEl, document.getElementById('fv-monthly-err'), 'Enter at least an initial amount or a monthly contribution.');
+      return;
+    }
+
+    if (increaseRaw !== '') {
+      const iv = parseFloat(increaseRaw);
+      if (isNaN(iv) || iv < 0) {
+        err(increaseEl, document.getElementById('fv-increase-err'), 'Enter a valid percentage (0 or above).');
+        return;
+      }
+      if (iv > 100) {
+        err(increaseEl, document.getElementById('fv-increase-err'), 'Annual increase cannot exceed 100%.');
+        return;
+      }
+    }
 
     if (!ok) return;
 
-    const pmt   = parseFloat(monthlyEl.value);
-    const r_m   = (parseFloat(rateEl.value) / 100) / 12;  // monthly rate
-    const years = parseFloat(yearsEl.value);
-    const n     = years * 12;                               // total months
+    const r_m            = (parseFloat(rateEl.value) / 100) / 12;
+    const years          = parseFloat(yearsEl.value);
+    const n              = Math.round(years * 12);
+    const annualIncrease = increaseRaw !== '' ? parseFloat(increaseRaw) / 100 : 0;
 
-    // FV of ordinary annuity (end-of-month payments)
-    let fv;
-    if (r_m < 1e-10) {
-      // Zero-rate edge case: just sum of contributions
-      fv = pmt * n;
-    } else {
-      fv = pmt * ((Math.pow(1 + r_m, n) - 1) / r_m);
+    // ── Simulate month by month (handles all cases uniformly) ──
+    let balance = initial0;
+    let pmt     = pmt0;
+    let totalContributed = initial0;
+
+    for (let month = 0; month < n; month++) {
+      if (month > 0 && month % 12 === 0 && annualIncrease > 0) {
+        pmt = pmt * (1 + annualIncrease);
+      }
+      balance = balance * (1 + r_m) + pmt;
+      totalContributed += pmt;
     }
+    const fv = balance;
 
-    const totalContributed = pmt * n;
-    const interestEarned   = fv - totalContributed;
-    const retPct           = (interestEarned / totalContributed) * 100;
-    const contribPct       = (totalContributed / fv) * 100;  // fraction that is contributions
-
-    const yrLabel = Number.isInteger(years) ? years : years.toFixed(2);
+    const interestEarned  = fv - totalContributed;
+    const retPct          = totalContributed > 0 ? (interestEarned / totalContributed) * 100 : 0;
+    const contribPct      = fv > 0 ? (totalContributed / fv) * 100 : 100;
+    const yrLabel         = Number.isInteger(years) ? years : years.toFixed(2);
+    const increaseLabel   = annualIncrease > 0
+      ? ` escalating at <strong>${fmtPct(annualIncrease * 100)}</strong>/yr` : '';
+    const initialLabel    = initial0 > 0
+      ? `<strong>${fmt(initial0)}</strong> initial + ` : '';
+    const pmtLabel        = pmt0 > 0
+      ? `<strong>${fmt(pmt0)}</strong>/month${increaseLabel}` : 'no monthly contribution';
 
     document.getElementById('fv-main').textContent = fmt(fv);
     document.getElementById('fv-note').innerHTML =
-      `<strong>${fmt(pmt)}</strong>/month at <strong>${fmtPct(parseFloat(rateEl.value))}</strong> p.a. ` +
-      `over <strong>${yrLabel} ${years === 1 ? 'year' : 'years'}</strong> ` +
-      `(<strong>${n % 1 === 0 ? n : n.toFixed(1)}</strong> payments)`;
+      `${initialLabel}${pmtLabel} ` +
+      `at <strong>${fmtPct(parseFloat(rateEl.value))}</strong> p.a. ` +
+      `over <strong>${yrLabel} ${years === 1 ? 'year' : 'years'}</strong>`;
 
     document.getElementById('fv-principal').textContent = fmt(totalContributed);
     document.getElementById('fv-interest').textContent  = fmt(interestEarned);
     document.getElementById('fv-return').textContent    = '+' + fmtPct(retPct);
 
-    // Bar shows growth portion relative to FV
     setBar('fv-fill', 100 - contribPct);
-
     document.getElementById('result-fv').classList.add('show');
   }
 
@@ -831,12 +1013,16 @@
   /* ── INIT ────────────────────────────────────────── */
   document.addEventListener('DOMContentLoaded', () => {
     [
-      ['tt-monthly', 'tt-monthly-err'],
-      ['tt-target',  'tt-target-err'],
-      ['tt-rate',    'tt-rate-err'],
-      ['fv-monthly', 'fv-monthly-err'],
-      ['fv-rate',    'fv-rate-err'],
-      ['fv-years',   'fv-years-err'],
+      ['tt-initial',  'tt-initial-err'],
+      ['tt-monthly',  'tt-monthly-err'],
+      ['tt-target',   'tt-target-err'],
+      ['tt-rate',     'tt-rate-err'],
+      ['tt-increase', 'tt-increase-err'],
+      ['fv-initial',  'fv-initial-err'],
+      ['fv-monthly',  'fv-monthly-err'],
+      ['fv-rate',     'fv-rate-err'],
+      ['fv-years',    'fv-years-err'],
+      ['fv-increase', 'fv-increase-err'],
     ].forEach(([a, b]) => bindClear(a, b));
 
     document.getElementById('form-tt').addEventListener('keydown', e => {
