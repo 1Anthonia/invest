@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Investment Calculator</title>
+  <meta name="description" content="Calculate how long monthly contributions take to reach a target, or project the future value of recurring monthly investments with compound interest." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ── TOKENS ─────────────────────────────────── */
+    :root {
+      --white:        #ffffff;
+      --bg:           #f5f5f4;
+      --surface:      #ffffff;
+      --border:       #e5e5e5;
+      --border-focus: #1a1a1a;
+
+      --text-primary:   #1a1a1a;
+      --text-secondary: #6b6b6b;
+      --text-muted:     #a3a3a3;
+
+      --accent-1:     #1a1a1a;    /* Time to Target — dark slate */
+      --accent-2:     #16803c;    /* Future Value   — deep green (naira colour nod) */
+
+      --result-1:     #1a1a1a;
+      --result-2:     #16803c;
+
+      --error:        #dc2626;
+
+      --radius:       10px;
+      --radius-sm:    6px;
+      --shadow:       0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-md:    0 4px 12px rgba(0,0,0,0.08);
+
+      --transition:   0.18s ease;
+    }
+
+    /* ── RESET ──────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text-primary);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── PAGE WRAPPER ───────────────────────────── */
+    .page {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 56px 24px 80px;
+    }
+
+    /* ── HEADER ─────────────────────────────────── */
+    .header {
+      margin-bottom: 48px;
+    }
+    .header-eyebrow {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+    .header h1 {
+      font-size: clamp(1.75rem, 4vw, 2.5rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: var(--text-primary);
+      line-height: 1.15;
+      margin-bottom: 10px;
+    }
+    .header p {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      max-width: 420px;
+    }
+
+    /* ── DIVIDER ────────────────────────────────── */
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin-bottom: 48px;
+    }
+
+    /* ── GRID ───────────────────────────────────── */
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    /* ── CARD ───────────────────────────────────── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px 28px;
+      box-shadow: var(--shadow);
+      transition: box-shadow var(--transition);
+    }
+    .card:hover {
+      box-shadow: var(--shadow-md);
+    }
+
+    /* Top colour tag */
+    .card-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 4px;
+      margin-bottom: 18px;
+    }
+    .tag-tt { background: #f0f0f0; color: var(--accent-1); }
+    .tag-fv { background: #dcfce7; color: var(--accent-2); }
+
+    .card h2 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+    .card-sub {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      margin-bottom: 28px;
+      line-height: 1.5;
+    }
+
+    /* ── LABEL ──────────────────────────────────── */
+    .label {
+      display: block;
+      font-size: 0.73rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      margin-bottom: 7px;
+    }
+
+    /* ── INPUT ──────────────────────────────────── */
+    .field { margin-bottom: 16px; }
+
+    .input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .input-icon {
+      position: absolute;
+      left: 13px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      pointer-events: none;
+      user-select: none;
+      transition: color var(--transition);
+    }
+    .input {
+      width: 100%;
+      height: 44px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0 12px 0 32px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--text-primary);
+      outline: none;
+      transition: border-color var(--transition), box-shadow var(--transition);
+      -moz-appearance: textfield;
+    }
+    .input::-webkit-inner-spin-button,
+    .input::-webkit-outer-spin-button { -webkit-appearance: none; }
+    .input::placeholder { color: var(--text-muted); font-weight: 400; }
+
+    .input:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px rgba(26,26,26,0.07);
+    }
+    .input:focus ~ .input-icon,
+    .input-wrap:focus-within .input-icon { color: var(--text-primary); }
+
+    /* Wider icon for "yr" */
+    .icon-yr { font-size: 0.7rem; letter-spacing: 0.02em; }
+    .pad-yr  { padding-left: 38px; }
+
+    /* Error */
+    .input.is-error { border-color: var(--error); box-shadow: 0 0 0 3px rgba(220,38,38,0.07); }
+    .err-msg {
+      display: none;
+      font-size: 0.72rem;
+      color: var(--error);
+      margin-top: 5px;
+      font-weight: 500;
+    }
+    .err-msg.show { display: block; }
+
+    /* Two-col input row */
+    .row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    /* ── BUTTON ─────────────────────────────────── */
+    .btn {
+      width: 100%;
+      height: 46px;
+      margin-top: 22px;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: opacity var(--transition), transform var(--transition);
+    }
+    .btn:hover   { opacity: 0.88; }
+    .btn:active  { transform: scale(0.98); opacity: 1; }
+
+    .btn-tt { background: var(--accent-1); color: #fff; }
+    .btn-fv { background: var(--accent-2); color: #fff; }
+
+    .btn-label { position: relative; z-index: 1; }
+
+    /* Ripple */
+    .ripple {
+      position: absolute;
+      border-radius: 50%;
+      transform: scale(0);
+      background: rgba(255,255,255,0.28);
+      animation: ripple 0.55s ease-out;
+      pointer-events: none;
+    }
+    @keyframes ripple {
+      to { transform: scale(4); opacity: 0; }
+    }
+
+    /* ── RESULT PANEL ───────────────────────────── */
+    .result {
+      margin-top: 22px;
+      border-top: 1px solid var(--border);
+      padding-top: 20px;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      pointer-events: none;
+    }
+    .result.show {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .result-eyebrow {
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+    .result-main {
+      font-size: clamp(1.5rem, 3vw, 1.9rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+      margin-bottom: 6px;
+    }
+    .card-tt .result-main { color: var(--result-1); }
+    .card-fv .result-main { color: var(--result-2); }
+
+    .result-note {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      line-height: 1.55;
+    }
+    .result-note strong { color: var(--text-primary); font-weight: 600; }
+
+    /* Breakdown (FV) */
+    .breakdown {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+    .bd-label {
+      font-size: 0.67rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+    .bd-value {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    /* Progress bar */
+    .prog-track {
+      height: 4px;
+      background: var(--border);
+      border-radius: 100px;
+      overflow: hidden;
+      margin-top: 18px;
+    }
+    .prog-fill {
+      height: 100%;
+      border-radius: 100px;
+      width: 0%;
+      transition: width 1s cubic-bezier(0.4,0,0.2,1) 0.1s;
+    }
+    .fill-dark  { background: var(--accent-1); }
+    .fill-green { background: var(--accent-2); }
+
+    .prog-legend {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 5px;
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    /* TT progress wrapper */
+    .tt-prog { display: none; margin-top: 14px; }
+    .tt-prog.show { display: block; }
+
+    /* ── MOBILE TAB ─────────────────────────────── */
+    .tab-bar {
+      display: none;
+      margin-bottom: 28px;
+      border-bottom: 1px solid var(--border);
+    }
+    .tab-bar-inner {
+      display: flex;
+      gap: 0;
+    }
+    .tab {
+      padding: 12px 20px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      border: none;
+      background: none;
+      cursor: pointer;
+      color: var(--text-muted);
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      transition: color var(--transition), border-color var(--transition);
+      font-family: 'Inter', sans-serif;
+    }
+    .tab.active {
+      color: var(--text-primary);
+      border-bottom-color: var(--text-primary);
+    }
+
+    /* ── FOOTER ─────────────────────────────────── */
+    .footer {
+      margin-top: 56px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+    .footer code {
+      font-family: 'Menlo', 'Consolas', monospace;
+      font-size: 0.72rem;
+      background: #f0f0f0;
+      padding: 1px 5px;
+      border-radius: 3px;
+      color: var(--text-secondary);
+    }
+
+    /* ── ENTRANCE ───────────────────────────────── */
+    .enter {
+      opacity: 0;
+      transform: translateY(16px);
+      animation: enter 0.5s ease forwards;
+    }
+    .enter:nth-child(1) { animation-delay: 0.05s; }
+    .enter:nth-child(2) { animation-delay: 0.15s; }
+    @keyframes enter {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── RESPONSIVE ─────────────────────────────── */
+    @media (max-width: 720px) {
+      .grid { grid-template-columns: 1fr; }
+      .tab-bar { display: block; }
+      .grid .card.hidden { display: none; }
+      .row-2 { grid-template-columns: 1fr; }
+      .page { padding: 36px 16px 60px; }
+    }
+    @media (max-width: 480px) {
+      .card { padding: 24px 20px; }
+      .breakdown { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<main class="page">
+
+  <!-- HEADER -->
+  <header class="header">
+    <p class="header-eyebrow">Financial Tools</p>
+    <h1>Investment Calculator</h1>
+    <p>Based on a fixed monthly contribution — find how long to reach a target or project the future value of your recurring investment.</p>
+  </header>
+
+  <div class="divider"></div>
+
+  <!-- MOBILE TABS -->
+  <nav class="tab-bar" role="tablist" aria-label="Calculator sections">
+    <div class="tab-bar-inner">
+      <button class="tab active" id="tab-tt" role="tab" aria-selected="true"  aria-controls="card-tt" onclick="switchTab('tt')">Time to Target</button>
+      <button class="tab"        id="tab-fv" role="tab" aria-selected="false" aria-controls="card-fv"  onclick="switchTab('fv')">Future Value</button>
+    </div>
+  </nav>
+
+  <!-- CARDS -->
+  <div class="grid">
+
+    <!-- ── CARD 1: TIME TO TARGET ── -->
+    <article class="card card-tt enter" id="card-tt" role="tabpanel" aria-labelledby="tab-tt">
+
+      <span class="card-tag tag-tt">01 — Time to Target</span>
+      <h2>Time to Reach Goal</h2>
+      <p class="card-sub">Enter your monthly contribution, target amount, and interest rate to find out how long it takes.</p>
+
+      <form id="form-tt" novalidate onsubmit="return false;">
+
+        <div class="row-2">
+          <!-- Monthly Amount -->
+          <div class="field">
+            <label class="label" for="tt-monthly">Monthly Amount</label>
+            <div class="input-wrap">
+              <span class="input-icon" aria-hidden="true">₦</span>
+              <input type="number" id="tt-monthly" class="input" placeholder="50,000"
+                     min="0.01" step="any" inputmode="decimal"
+                     aria-label="Monthly contribution in Naira" autocomplete="off" />
+            </div>
+            <span class="err-msg" id="tt-monthly-err" role="alert" aria-live="polite"></span>
+          </div>
+
+          <!-- Target -->
+          <div class="field">
+            <label class="label" for="tt-target">Target Amount</label>
+            <div class="input-wrap">
+              <span class="input-icon" aria-hidden="true">₦</span>
+              <input type="number" id="tt-target" class="input" placeholder="5,000,000"
+                     min="0.02" step="any" inputmode="decimal"
+                     aria-label="Target Amount in Naira" autocomplete="off" />
+            </div>
+            <span class="err-msg" id="tt-target-err" role="alert" aria-live="polite"></span>
+          </div>
+        </div>
+
+        <!-- Rate -->
+        <div class="field">
+          <label class="label" for="tt-rate">Annual Interest Rate</label>
+          <div class="input-wrap">
+            <span class="input-icon" aria-hidden="true">%</span>
+            <input type="number" id="tt-rate" class="input" placeholder="12.5"
+                   min="0.01" max="100" step="any" inputmode="decimal"
+                   aria-label="Annual interest rate as a percentage" autocomplete="off" />
+          </div>
+          <span class="err-msg" id="tt-rate-err" role="alert" aria-live="polite"></span>
+        </div>
+
+        <button type="button" class="btn btn-tt" id="btn-tt"
+                onclick="calcTT(event)" aria-label="Calculate time to reach target">
+          <span class="btn-label">Calculate</span>
+        </button>
+
+      </form>
+
+      <!-- RESULT -->
+      <div class="result" id="result-tt" aria-live="polite" aria-atomic="true">
+        <p class="result-eyebrow">Time Required</p>
+        <p class="result-main" id="tt-main">—</p>
+        <p class="result-note" id="tt-note"></p>
+        <div class="tt-prog" id="tt-prog">
+          <div class="prog-track">
+            <div class="prog-fill fill-dark" id="tt-fill"></div>
+          </div>
+          <div class="prog-legend"><span>Seed</span><span>Target</span></div>
+        </div>
+      </div>
+
+    </article>
+
+    <!-- ── CARD 2: FUTURE VALUE ── -->
+    <article class="card card-fv enter" id="card-fv" role="tabpanel" aria-labelledby="tab-fv">
+
+      <span class="card-tag tag-fv">02 — Future Value</span>
+      <h2>Projected Value</h2>
+      <p class="card-sub">Enter your monthly contribution, interest rate, and investment duration to see the final value.</p>
+
+      <form id="form-fv" novalidate onsubmit="return false;">
+
+        <div class="row-2">
+          <!-- Monthly Amount -->
+          <div class="field">
+            <label class="label" for="fv-monthly">Monthly Amount</label>
+            <div class="input-wrap">
+              <span class="input-icon" aria-hidden="true">₦</span>
+              <input type="number" id="fv-monthly" class="input" placeholder="50,000"
+                     min="0.01" step="any" inputmode="decimal"
+                     aria-label="Monthly contribution in Naira" autocomplete="off" />
+            </div>
+            <span class="err-msg" id="fv-monthly-err" role="alert" aria-live="polite"></span>
+          </div>
+
+          <!-- Years -->
+          <div class="field">
+            <label class="label" for="fv-years">Number of Years</label>
+            <div class="input-wrap">
+              <span class="input-icon icon-yr" aria-hidden="true">yr</span>
+              <input type="number" id="fv-years" class="input pad-yr" placeholder="10"
+                     min="0.01" max="200" step="any" inputmode="decimal"
+                     aria-label="Number of years" autocomplete="off" />
+            </div>
+            <span class="err-msg" id="fv-years-err" role="alert" aria-live="polite"></span>
+          </div>
+        </div>
+
+        <!-- Rate -->
+        <div class="field">
+          <label class="label" for="fv-rate">Annual Interest Rate</label>
+          <div class="input-wrap">
+            <span class="input-icon" aria-hidden="true">%</span>
+            <input type="number" id="fv-rate" class="input" placeholder="12.5"
+                   min="0.01" max="100" step="any" inputmode="decimal"
+                   aria-label="Annual interest rate as a percentage" autocomplete="off" />
+          </div>
+          <span class="err-msg" id="fv-rate-err" role="alert" aria-live="polite"></span>
+        </div>
+
+        <button type="button" class="btn btn-fv" id="btn-fv"
+                onclick="calcFV(event)" aria-label="Calculate future investment value">
+          <span class="btn-label">Calculate</span>
+        </button>
+
+      </form>
+
+      <!-- RESULT -->
+      <div class="result" id="result-fv" aria-live="polite" aria-atomic="true">
+        <p class="result-eyebrow">Projected Value</p>
+        <p class="result-main" id="fv-main">—</p>
+        <p class="result-note" id="fv-note"></p>
+        <div class="breakdown">
+          <div>
+            <p class="bd-label">Contributed</p>
+            <p class="bd-value" id="fv-principal">—</p>
+          </div>
+          <div>
+            <p class="bd-label">Interest</p>
+            <p class="bd-value" id="fv-interest">—</p>
+          </div>
+          <div>
+            <p class="bd-label">Return</p>
+            <p class="bd-value" id="fv-return">—</p>
+          </div>
+        </div>
+        <div class="prog-track" style="margin-top:16px">
+          <div class="prog-fill fill-green" id="fv-fill"></div>
+        </div>
+        <div class="prog-legend"><span>Principal</span><span>Growth</span></div>
+      </div>
+
+    </article>
+
+  </div><!-- /grid -->
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <p>
+      Formula: <code>FV = PMT × [((1 + r/12)^(n×12) − 1) ÷ (r/12)]</code> &nbsp;·&nbsp;
+      Time to target: <code>n = ln(1 + FV × rₙ ÷ PMT) ÷ ln(1 + rₙ)</code> &nbsp;·&nbsp;
+      Monthly compounding. Results are indicative only.
+    </p>
+  </footer>
+
+</main>
+
+<script>
+  /* ── HELPERS ─────────────────────────────────────── */
+
+  const fmt = n =>
+    '₦' + n.toLocaleString('en-NG', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+
+  const fmtPct = n =>
+    n.toLocaleString('en-NG', { minimumFractionDigits: 1, maximumFractionDigits: 2 }) + '%';
+
+  /**
+   * Convert a total number of months into a human-readable string.
+   * e.g. 29 → "2 years and 5 months"
+   */
+  function readableMonths(totalMonths) {
+    const rounded = Math.round(totalMonths);
+    const y = Math.floor(rounded / 12);
+    const m = rounded % 12;
+    const parts = [];
+    if (y === 1)    parts.push('1 year');
+    else if (y > 1) parts.push(`${y} years`);
+    if (m === 1)    parts.push('1 month');
+    else if (m > 1) parts.push(`${m} months`);
+    return parts.length ? parts.join(' and ') : 'Less than 1 month';
+  }
+
+  /* ── VALIDATION ──────────────────────────────────── */
+
+  function validate(inputEl, errEl, opts = {}) {
+    clearErr(inputEl, errEl);
+    const raw = inputEl.value.trim();
+    if (!raw) return err(inputEl, errEl, 'This field is required.');
+    const val = parseFloat(raw);
+    if (isNaN(val)) return err(inputEl, errEl, 'Enter a valid number.');
+    if (opts.min !== undefined && val <= opts.min)
+      return err(inputEl, errEl, opts.minMsg ?? `Must be greater than ${opts.min}.`);
+    if (opts.max !== undefined && val > opts.max)
+      return err(inputEl, errEl, opts.maxMsg ?? `Must be ≤ ${opts.max}.`);
+    return true;
+  }
+
+  function err(inputEl, errEl, msg) {
+    inputEl.classList.add('is-error');
+    errEl.textContent = msg;
+    errEl.classList.add('show');
+    return false;
+  }
+
+  function clearErr(inputEl, errEl) {
+    inputEl.classList.remove('is-error');
+    errEl.classList.remove('show');
+    errEl.textContent = '';
+  }
+
+  function bindClear(inputId, errId) {
+    const i = document.getElementById(inputId);
+    const e = document.getElementById(errId);
+    i.addEventListener('input', () => { if (i.value.trim()) clearErr(i, e); });
+  }
+
+  /* ── RIPPLE ──────────────────────────────────────── */
+  function ripple(event) {
+    const btn  = event.currentTarget;
+    const el   = document.createElement('span');
+    const rect = btn.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height);
+    el.className = 'ripple';
+    el.style.cssText = `
+      width:${size}px; height:${size}px;
+      left:${event.clientX - rect.left - size / 2}px;
+      top:${event.clientY  - rect.top  - size / 2}px;
+    `;
+    btn.appendChild(el);
+    el.addEventListener('animationend', () => el.remove());
+  }
+
+  /* ── PROGRESS BAR ────────────────────────────────── */
+  function setBar(id, pct) {
+    const fill = document.getElementById(id);
+    fill.style.width = '0%';
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      fill.style.width = Math.min(Math.max(pct, 0), 100) + '%';
+    }));
+  }
+
+  /* ── CALC 1: TIME TO TARGET (annuity) ───────────────
+   *
+   * For a series of monthly payments PMT at monthly rate r_m,
+   * the future value annuity formula is:
+   *   FV = PMT × [((1 + r_m)^n − 1) / r_m]
+   *
+   * Solving for n (number of months):
+   *   n = ln(1 + FV × r_m / PMT) / ln(1 + r_m)
+   *
+   * where r_m = annual_rate / 12
+   * ──────────────────────────────────────────────── */
+  function calcTT(e) {
+    ripple(e);
+
+    const monthlyEl = document.getElementById('tt-monthly');
+    const targetEl  = document.getElementById('tt-target');
+    const rateEl    = document.getElementById('tt-rate');
+
+    const ok =
+      validate(monthlyEl, document.getElementById('tt-monthly-err'), { min: 0, minMsg: 'Monthly amount must be greater than zero.' }) &
+      validate(targetEl,  document.getElementById('tt-target-err'),  { min: 0, minMsg: 'Target must be greater than zero.' }) &
+      validate(rateEl,    document.getElementById('tt-rate-err'),    { min: 0, minMsg: 'Rate must be greater than zero.', max: 100, maxMsg: 'Rate cannot exceed 100%.' });
+
+    if (!ok) return;
+
+    const pmt    = parseFloat(monthlyEl.value);  // monthly contribution
+    const target = parseFloat(targetEl.value);   // desired future value
+    const r_m    = (parseFloat(rateEl.value) / 100) / 12; // monthly rate
+
+    // Guard: if rate is effectively 0, use simple division
+    let months;
+    if (r_m < 1e-10) {
+      months = target / pmt;
+    } else {
+      const inner = 1 + (target * r_m) / pmt;
+      if (inner <= 0) {
+        err(monthlyEl, document.getElementById('tt-monthly-err'),
+          'Monthly contribution is too small to ever reach this target at the given rate.');
+        return;
+      }
+      months = Math.log(inner) / Math.log(1 + r_m);
+    }
+
+    const totalContributed = pmt * months;
+    const interestEarned   = target - totalContributed;
+
+    document.getElementById('tt-main').textContent = readableMonths(months);
+    document.getElementById('tt-note').innerHTML =
+      `Contributing <strong>${fmt(pmt)}</strong>/month to reach <strong>${fmt(target)}</strong> ` +
+      `at <strong>${fmtPct(parseFloat(rateEl.value))}</strong> p.a. — ` +
+      `<span style="color:var(--text-muted)">${months.toFixed(1)} months total</span>`;
+
+    const prog = document.getElementById('tt-prog');
+    prog.classList.add('show');
+    // Bar shows how much of the target is interest vs contributions
+    setBar('tt-fill', Math.min((interestEarned / target) * 100, 100));
+
+    document.getElementById('result-tt').classList.add('show');
+  }
+
+  /* ── CALC 2: FUTURE VALUE (annuity) ─────────────────
+   *
+   * FV = PMT × [((1 + r_m)^(n×12) − 1) / r_m]
+   *
+   * where r_m = annual_rate / 12,  n = years
+   * ──────────────────────────────────────────────── */
+  function calcFV(e) {
+    ripple(e);
+
+    const monthlyEl = document.getElementById('fv-monthly');
+    const rateEl    = document.getElementById('fv-rate');
+    const yearsEl   = document.getElementById('fv-years');
+
+    const ok =
+      validate(monthlyEl, document.getElementById('fv-monthly-err'), { min: 0, minMsg: 'Monthly amount must be greater than zero.' }) &
+      validate(rateEl,    document.getElementById('fv-rate-err'),    { min: 0, minMsg: 'Rate must be greater than zero.', max: 100, maxMsg: 'Rate cannot exceed 100%.' }) &
+      validate(yearsEl,   document.getElementById('fv-years-err'),   { min: 0, minMsg: 'Years must be greater than zero.', max: 200, maxMsg: 'Maximum horizon is 200 years.' });
+
+    if (!ok) return;
+
+    const pmt   = parseFloat(monthlyEl.value);
+    const r_m   = (parseFloat(rateEl.value) / 100) / 12;  // monthly rate
+    const years = parseFloat(yearsEl.value);
+    const n     = years * 12;                               // total months
+
+    // FV of ordinary annuity (end-of-month payments)
+    let fv;
+    if (r_m < 1e-10) {
+      // Zero-rate edge case: just sum of contributions
+      fv = pmt * n;
+    } else {
+      fv = pmt * ((Math.pow(1 + r_m, n) - 1) / r_m);
+    }
+
+    const totalContributed = pmt * n;
+    const interestEarned   = fv - totalContributed;
+    const retPct           = (interestEarned / totalContributed) * 100;
+    const contribPct       = (totalContributed / fv) * 100;  // fraction that is contributions
+
+    const yrLabel = Number.isInteger(years) ? years : years.toFixed(2);
+
+    document.getElementById('fv-main').textContent = fmt(fv);
+    document.getElementById('fv-note').innerHTML =
+      `<strong>${fmt(pmt)}</strong>/month at <strong>${fmtPct(parseFloat(rateEl.value))}</strong> p.a. ` +
+      `over <strong>${yrLabel} ${years === 1 ? 'year' : 'years'}</strong> ` +
+      `(<strong>${n % 1 === 0 ? n : n.toFixed(1)}</strong> payments)`;
+
+    document.getElementById('fv-principal').textContent = fmt(totalContributed);
+    document.getElementById('fv-interest').textContent  = fmt(interestEarned);
+    document.getElementById('fv-return').textContent    = '+' + fmtPct(retPct);
+
+    // Bar shows growth portion relative to FV
+    setBar('fv-fill', 100 - contribPct);
+
+    document.getElementById('result-fv').classList.add('show');
+  }
+
+  /* ── MOBILE TAB SWITCH ───────────────────────────── */
+  function switchTab(t) {
+    const cardTT = document.getElementById('card-tt');
+    const cardFV = document.getElementById('card-fv');
+    const tabTT  = document.getElementById('tab-tt');
+    const tabFV  = document.getElementById('tab-fv');
+
+    const isTT = t === 'tt';
+    cardTT.classList.toggle('hidden', !isTT);
+    cardFV.classList.toggle('hidden', isTT);
+    tabTT.classList.toggle('active', isTT);
+    tabFV.classList.toggle('active', !isTT);
+    tabTT.setAttribute('aria-selected', String(isTT));
+    tabFV.setAttribute('aria-selected', String(!isTT));
+  }
+
+  /* ── INIT ────────────────────────────────────────── */
+  document.addEventListener('DOMContentLoaded', () => {
+    [
+      ['tt-monthly', 'tt-monthly-err'],
+      ['tt-target',  'tt-target-err'],
+      ['tt-rate',    'tt-rate-err'],
+      ['fv-monthly', 'fv-monthly-err'],
+      ['fv-rate',    'fv-rate-err'],
+      ['fv-years',   'fv-years-err'],
+    ].forEach(([a, b]) => bindClear(a, b));
+
+    document.getElementById('form-tt').addEventListener('keydown', e => {
+      if (e.key === 'Enter') document.getElementById('btn-tt').click();
+    });
+    document.getElementById('form-fv').addEventListener('keydown', e => {
+      if (e.key === 'Enter') document.getElementById('btn-fv').click();
+    });
+  });
+</script>
+</body>
+</html>
