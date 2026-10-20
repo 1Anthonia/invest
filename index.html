@@ -237,6 +237,23 @@
       gap: 12px;
     }
 
+    /* ── TWO-TONE PROGRESS BAR ──────────────── */
+    .prog-track {
+      display: flex;          /* two segments sit side-by-side */
+      height: 6px;
+      background: var(--border);
+      border-radius: 100px;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+    /* Each segment independently animated */
+    .prog-seg {
+      height: 100%;
+      width: 0%;
+      transition: width 1s cubic-bezier(0.4,0,0.2,1) 0.1s;
+      flex-shrink: 0;
+    }
+
     /* ── BUTTON ─────────────────────────────────── */
     .btn {
       width: 100%;
@@ -368,6 +385,103 @@
     /* TT progress wrapper */
     .tt-prog { display: none; margin-top: 8px; }
     .tt-prog.show { display: block; }
+
+    /* ── TAX TOGGLE ─────────────────────────────── */
+    .tax-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 10px;
+      margin-bottom: 2px;
+      padding: 8px 10px;
+      background: #fafafa;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+    }
+    .tax-row label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      cursor: pointer;
+      user-select: none;
+      flex: 1;
+    }
+    .tax-badge {
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      background: #fef9c3;
+      color: #854d0e;
+      border-radius: 3px;
+      padding: 2px 6px;
+    }
+    /* Toggle switch */
+    .toggle-wrap {
+      position: relative;
+      width: 34px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+    .toggle-wrap input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+      position: absolute;
+    }
+    .toggle-track {
+      position: absolute;
+      inset: 0;
+      background: var(--border);
+      border-radius: 100px;
+      cursor: pointer;
+      transition: background var(--transition);
+    }
+    .toggle-track::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 14px;
+      height: 14px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform var(--transition);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+    .toggle-wrap input:checked + .toggle-track {
+      background: #854d0e;
+    }
+    .toggle-wrap input:checked + .toggle-track::after {
+      transform: translateX(16px);
+    }
+
+    /* After-tax result sub-row */
+    .after-tax-row {
+      display: none;
+      align-items: baseline;
+      gap: 8px;
+      margin-top: 6px;
+      flex-wrap: wrap;
+    }
+    .after-tax-row.show { display: flex; }
+    .after-tax-label {
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .after-tax-value {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #854d0e;
+      letter-spacing: -0.02em;
+    }
+    .after-tax-note {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
 
     /* ── TAB BAR (all screen sizes) ────────────── */
     .tab-bar {
@@ -561,6 +675,15 @@
           <span class="err-msg" id="tt-increase-err" role="alert" aria-live="polite"></span>
         </div>
 
+        <!-- Tax Toggle -->
+        <div class="tax-row">
+          <label for="tt-tax">Apply 10% tax on interest gains <span class="tax-badge">Tax</span></label>
+          <div class="toggle-wrap">
+            <input type="checkbox" id="tt-tax" aria-label="Apply 10 percent tax reduction on interest earned" />
+            <label class="toggle-track" for="tt-tax"></label>
+          </div>
+        </div>
+
         <button type="button" class="btn btn-tt" id="btn-tt"
                 onclick="calcTT(event)" aria-label="Calculate time to reach target">
           <span class="btn-label">Calculate</span>
@@ -573,11 +696,37 @@
         <p class="result-eyebrow">Time Required</p>
         <p class="result-main" id="tt-main">—</p>
         <p class="result-note" id="tt-note"></p>
-        <div class="tt-prog" id="tt-prog">
-          <div class="prog-track">
-            <div class="prog-fill fill-dark" id="tt-fill"></div>
+        <div class="after-tax-row" id="tt-aftertax-row">
+          <span class="after-tax-label">After-tax net:</span>
+          <span class="after-tax-value" id="tt-aftertax-val"></span>
+          <span class="after-tax-note" id="tt-aftertax-note"></span>
+        </div>
+        <!-- Breakdown -->
+        <div class="breakdown" id="tt-breakdown" style="display:none">
+          <div>
+            <p class="bd-label">Contributed</p>
+            <p class="bd-value" id="tt-principal">—</p>
           </div>
-          <div class="prog-legend"><span>Seed</span><span>Target</span></div>
+          <div>
+            <p class="bd-label">Interest</p>
+            <p class="bd-value" id="tt-interest">—</p>
+          </div>
+          <div>
+            <p class="bd-label">Return</p>
+            <p class="bd-value" id="tt-return">—</p>
+          </div>
+          <div id="tt-tax-row" style="display:none">
+            <p class="bd-label" style="color:#854d0e">Tax (10%)</p>
+            <p class="bd-value" style="color:#854d0e" id="tt-tax-deducted">—</p>
+          </div>
+        </div>
+        <!-- Two-tone progress bar: left=contributed (dark), right=gains (grey) -->
+        <div class="tt-prog" id="tt-prog">
+          <div class="prog-track" style="margin-top:12px">
+            <div class="prog-seg" id="tt-fill-a" style="background:#1a1a1a"></div>
+            <div class="prog-seg" id="tt-fill-b" style="background:#a3a3a3"></div>
+          </div>
+          <div class="prog-legend"><span>Contributed</span><span>Gains</span></div>
         </div>
       </div>
 
@@ -663,6 +812,15 @@
           <span class="err-msg" id="fv-increase-err" role="alert" aria-live="polite"></span>
         </div>
 
+        <!-- Tax Toggle -->
+        <div class="tax-row">
+          <label for="fv-tax">Apply 10% tax on interest gains <span class="tax-badge">Tax</span></label>
+          <div class="toggle-wrap">
+            <input type="checkbox" id="fv-tax" aria-label="Apply 10 percent tax reduction on interest earned" />
+            <label class="toggle-track" for="fv-tax"></label>
+          </div>
+        </div>
+
         <button type="button" class="btn btn-fv" id="btn-fv"
                 onclick="calcFV(event)" aria-label="Calculate future investment value">
           <span class="btn-label">Calculate</span>
@@ -672,9 +830,15 @@
 
       <!-- RESULT -->
       <div class="result" id="result-fv" aria-live="polite" aria-atomic="true">
-        <p class="result-eyebrow">Projected Value</p>
+        <p class="result-eyebrow">Projected Value (Gross)</p>
         <p class="result-main" id="fv-main">—</p>
         <p class="result-note" id="fv-note"></p>
+        <!-- After-tax result row -->
+        <div class="after-tax-row" id="fv-aftertax-row">
+          <span class="after-tax-label">After-tax value:</span>
+          <span class="after-tax-value" id="fv-aftertax-val"></span>
+          <span class="after-tax-note" id="fv-aftertax-note"></span>
+        </div>
         <div class="breakdown">
           <div>
             <p class="bd-label">Contributed</p>
@@ -688,11 +852,21 @@
             <p class="bd-label">Return</p>
             <p class="bd-value" id="fv-return">—</p>
           </div>
+          <div id="fv-tax-row" style="display:none">
+            <p class="bd-label" style="color:#854d0e">Tax (10%)</p>
+            <p class="bd-value" style="color:#854d0e" id="fv-tax-deducted">—</p>
+          </div>
+          <div id="fv-posttax-row" style="display:none">
+            <p class="bd-label" style="color:#854d0e">After-Tax Net</p>
+            <p class="bd-value" style="color:#854d0e" id="fv-posttax-val">—</p>
+          </div>
         </div>
+        <!-- Two-tone progress bar: left=contributed (deep green), right=gains (light green) -->
         <div class="prog-track" style="margin-top:16px">
-          <div class="prog-fill fill-green" id="fv-fill"></div>
+          <div class="prog-seg" id="fv-fill-a" style="background:#16803c"></div>
+          <div class="prog-seg" id="fv-fill-b" style="background:#4ade80"></div>
         </div>
-        <div class="prog-legend"><span>Principal</span><span>Growth</span></div>
+        <div class="prog-legend"><span>Contributed</span><span>Gains</span></div>
       </div>
 
     </article>
@@ -788,7 +962,30 @@
     el.addEventListener('animationend', () => el.remove());
   }
 
-  /* ── PROGRESS BAR ────────────────────────────────── */
+  /* ── TWO-TONE PROGRESS BAR ───────────────────────── */
+  /**
+   * Sets two sibling elements (id + '-a' and id + '-b') to show a
+   * two-colour split bar.
+   *   totalPct  – combined fill as % of track width (0–100)
+   *   splitPct  – what % of the filled area is colour-A (0–100)
+   */
+  function setTwoToneBar(barId, totalPct, splitPct) {
+    const a = document.getElementById(barId + '-a');
+    const b = document.getElementById(barId + '-b');
+    const total  = Math.min(Math.max(totalPct, 0), 100);
+    const split  = Math.min(Math.max(splitPct, 0), 100);
+    const widthA = (total * split)       / 100;
+    const widthB = (total * (100-split)) / 100;
+    // Reset to 0 first so the transition fires every time
+    a.style.width = '0%';
+    b.style.width = '0%';
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      a.style.width = widthA + '%';
+      b.style.width = widthB + '%';
+    }));
+  }
+
+  /* ── PROGRESS BAR (legacy) ───────────────────────── */
   function setBar(id, pct) {
     const fill = document.getElementById(id);
     fill.style.width = '0%';
@@ -867,32 +1064,47 @@
       return;
     }
 
+    // ── Read tax toggle before simulation ──
+    const applyTax = document.getElementById('tt-tax').checked;
+
     // ── Simulate month by month ──
+    // When tax is ON, we simulate until the after-tax balance
+    // (principal + gains × 90%) reaches the target, meaning the
+    // gross balance will be higher than the target figure.
     let balance = initial0;
     let pmt     = pmt0;
     let month   = 0;
     let totalContributed = initial0;
     const MAX_MONTHS = 12000;
 
-    while (balance < target && month < MAX_MONTHS) {
+    const hasReachedTarget = () => {
+      if (!applyTax) return balance >= target;
+      // after-tax = totalContributed + (balance - totalContributed) * 0.9
+      const afterTax = totalContributed + (balance - totalContributed) * 0.9;
+      return afterTax >= target;
+    };
+
+    while (!hasReachedTarget() && month < MAX_MONTHS) {
       if (month > 0 && month % 12 === 0 && annualIncrease > 0) {
         pmt = pmt * (1 + annualIncrease);
       }
       balance = balance * (1 + r_m) + pmt;
       totalContributed += pmt;
       month++;
-      // Safety: if pmt is 0 and balance won't grow enough, break
       if (pmt < 1e-10 && r_m < 1e-10) break;
     }
 
-    if (balance < target) {
+    if (!hasReachedTarget()) {
       err(rateEl, document.getElementById('tt-rate-err'),
         'These inputs cannot reach the target. Increase the contribution, initial amount, or rate.');
       return;
     }
 
-    const months        = month;
-    const interestEarned = balance - totalContributed;
+    const months         = month;
+    const grossInterest  = balance - totalContributed;
+    const taxAmount      = applyTax ? grossInterest * 0.10 : 0;
+    const afterTaxValue  = totalContributed + grossInterest - taxAmount; // ≈ target when tax ON
+
     const increaseLabel  = annualIncrease > 0
       ? ` escalating at <strong>${fmtPct(annualIncrease * 100)}</strong>/yr`
       : '';
@@ -902,13 +1114,48 @@
       ? `<strong>${fmt(pmt0)}</strong>/month${increaseLabel}` : 'no monthly contribution';
 
     document.getElementById('tt-main').textContent = readableMonths(months);
-    document.getElementById('tt-note').innerHTML =
-      `${initialLabel}${pmtLabel} to reach <strong>${fmt(target)}</strong> ` +
-      `at <strong>${fmtPct(parseFloat(rateEl.value))}</strong> p.a. — ` +
-      `<span style="color:var(--text-muted)">${months} months total</span>`;
 
+    // Breakdown
+    const retPct = totalContributed > 0 ? (grossInterest / totalContributed) * 100 : 0;
+    document.getElementById('tt-principal').textContent = fmt(totalContributed);
+    document.getElementById('tt-interest').textContent  = applyTax ? fmt(grossInterest - taxAmount) : fmt(grossInterest);
+    document.getElementById('tt-return').textContent    = '+' + fmtPct(applyTax
+      ? ((grossInterest - taxAmount) / totalContributed) * 100
+      : retPct);
+    const ttTaxRow = document.getElementById('tt-tax-row');
+    if (applyTax) {
+      document.getElementById('tt-tax-deducted').textContent = '−' + fmt(taxAmount);
+      ttTaxRow.style.display = '';
+    } else {
+      ttTaxRow.style.display = 'none';
+    }
+    document.getElementById('tt-breakdown').style.display = '';
+
+    // After-tax panel
+    const aftertaxRow = document.getElementById('tt-aftertax-row');
+    if (applyTax) {
+      // Note: explain that the gross is higher so the net hits the target
+      document.getElementById('tt-note').innerHTML =
+        `${initialLabel}${pmtLabel} to accumulate <strong>${fmt(balance)}</strong> gross ` +
+        `at <strong>${fmtPct(parseFloat(rateEl.value))}</strong> p.a. — ` +
+        `so that after <strong>10% tax on gains</strong> you net your target of <strong>${fmt(target)}</strong>. ` +
+        `<span style="color:var(--text-muted)">${months} months total</span>`;
+      document.getElementById('tt-aftertax-val').textContent  = fmt(afterTaxValue);
+      document.getElementById('tt-aftertax-note').textContent =
+        `(gross ${fmt(balance)} − ${fmt(taxAmount)} tax = ${fmt(afterTaxValue)} net ≈ target)`;
+      aftertaxRow.classList.add('show');
+    } else {
+      document.getElementById('tt-note').innerHTML =
+        `${initialLabel}${pmtLabel} to reach <strong>${fmt(target)}</strong> ` +
+        `at <strong>${fmtPct(parseFloat(rateEl.value))}</strong> p.a. — ` +
+        `<span style="color:var(--text-muted)">${months} months total</span>`;
+      aftertaxRow.classList.remove('show');
+    }
+
+    // Two-tone bar: total fill = 100% (always reached), split = contributed % of gross
+    const contribSplit = balance > 0 ? (totalContributed / balance) * 100 : 50;
     document.getElementById('tt-prog').classList.add('show');
-    setBar('tt-fill', Math.min(((balance - initial0) / (target - initial0)) * 100, 100));
+    setTwoToneBar('tt-fill', 100, contribSplit);
     document.getElementById('result-tt').classList.add('show');
   }
 
@@ -995,17 +1242,54 @@
     const pmtLabel        = pmt0 > 0
       ? `<strong>${fmt(pmt0)}</strong>/month${increaseLabel}` : 'no monthly contribution';
 
-    document.getElementById('fv-main').textContent = fmt(fv);
-    document.getElementById('fv-note').innerHTML =
-      `${initialLabel}${pmtLabel} ` +
-      `at <strong>${fmtPct(parseFloat(rateEl.value))}</strong> p.a. ` +
-      `over <strong>${yrLabel} ${years === 1 ? 'year' : 'years'}</strong>`;
+    const applyTax    = document.getElementById('fv-tax').checked;
+    const taxAmount   = applyTax ? interestEarned * 0.10 : 0;
+    const afterTaxFV  = totalContributed + (interestEarned - taxAmount);
+    const afterTaxRetPct = totalContributed > 0 ? ((afterTaxFV - totalContributed) / totalContributed) * 100 : 0;
+
+    // When tax is ON, show after-tax value as the headline; gross is secondary
+    const displayFV = applyTax ? afterTaxFV : fv;
+    document.getElementById('fv-main').textContent = fmt(displayFV);
+
+    if (applyTax) {
+      document.getElementById('fv-note').innerHTML =
+        `After 10% tax on gains — gross value is <strong>${fmt(fv)}</strong>. ` +
+        `${initialLabel}${pmtLabel} ` +
+        `at <strong>${fmtPct(parseFloat(rateEl.value))}</strong> p.a. ` +
+        `over <strong>${yrLabel} ${years === 1 ? 'year' : 'years'}</strong>`;
+    } else {
+      document.getElementById('fv-note').innerHTML =
+        `${initialLabel}${pmtLabel} ` +
+        `at <strong>${fmtPct(parseFloat(rateEl.value))}</strong> p.a. ` +
+        `over <strong>${yrLabel} ${years === 1 ? 'year' : 'years'}</strong>`;
+    }
 
     document.getElementById('fv-principal').textContent = fmt(totalContributed);
-    document.getElementById('fv-interest').textContent  = fmt(interestEarned);
-    document.getElementById('fv-return').textContent    = '+' + fmtPct(retPct);
+    document.getElementById('fv-interest').textContent  = applyTax ? fmt(interestEarned - taxAmount) : fmt(interestEarned);
+    document.getElementById('fv-return').textContent    = '+' + fmtPct(applyTax ? afterTaxRetPct : retPct);
 
-    setBar('fv-fill', 100 - contribPct);
+    // Tax breakdown rows
+    const taxRowEl     = document.getElementById('fv-tax-row');
+    const posttaxRowEl = document.getElementById('fv-posttax-row');
+    const aftertaxRow  = document.getElementById('fv-aftertax-row');
+    if (applyTax) {
+      document.getElementById('fv-tax-deducted').textContent = '−' + fmt(taxAmount);
+      document.getElementById('fv-posttax-val').textContent  = fmt(afterTaxFV);
+      taxRowEl.style.display     = '';
+      posttaxRowEl.style.display = 'none'; // already shown in main + interest
+      document.getElementById('fv-aftertax-val').textContent  = fmt(afterTaxFV);
+      document.getElementById('fv-aftertax-note').textContent =
+        `(${fmt(taxAmount)} tax deducted · 10% of gross interest ${fmt(interestEarned)})`;
+      aftertaxRow.classList.add('show');
+    } else {
+      taxRowEl.style.display     = 'none';
+      posttaxRowEl.style.display = 'none';
+      aftertaxRow.classList.remove('show');
+    }
+
+    // Two-tone bar: total fill = 100%, split = contributed proportion
+    const contribSplit = fv > 0 ? (totalContributed / fv) * 100 : 50;
+    setTwoToneBar('fv-fill', 100, contribSplit);
     document.getElementById('result-fv').classList.add('show');
   }
 
@@ -1047,9 +1331,20 @@
       if (e.key === 'Enter') document.getElementById('btn-fv').click();
     });
 
+    // Re-calculate immediately when the tax toggle is flipped,
+    // but only if results are already showing (avoids premature validation errors).
+    document.getElementById('tt-tax').addEventListener('change', () => {
+      if (document.getElementById('result-tt').classList.contains('show')) {
+        document.getElementById('btn-tt').click();
+      }
+    });
+    document.getElementById('fv-tax').addEventListener('change', () => {
+      if (document.getElementById('result-fv').classList.contains('show')) {
+        document.getElementById('btn-fv').click();
+      }
+    });
+
     // Set initial tab state so card-fv starts hidden on mobile
-    // (hidden class only takes effect inside the ≤720px media query,
-    //  so desktop layout is unaffected)
     switchTab('tt');
   });
 </script>
